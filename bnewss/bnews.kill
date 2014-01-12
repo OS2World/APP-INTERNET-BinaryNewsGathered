@@ -1,0 +1,9 @@
+
+all {
+  From money
+  Subject cash
+  Subject money
+  Subject \$
+  Subject 1-[89]00
+}
+

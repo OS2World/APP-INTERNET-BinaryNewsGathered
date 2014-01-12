@@ -1,0 +1,37 @@
+This is the source code for Binary News Gatherer.
+
+Bnews is compiled with IBM CSet++ v2.1 + CSD's.
+
+The directory .\Bnews and its subdirectories are stored in the archive
+bnewssource.zip
+
+There are the following prerequisites:
+
+    OCL v1.50   - Cubus C++ OS/2 Class Library (freeware!).  This is
+                  available from my web page and ftp-os2.cdrom.com.  You
+                  will need the source and binaries, oclsrc15.zip and
+                  oclbin15.zip.  Or just the source if you want to
+                  compile it yourself.
+
+    setloci.lib - From the Internationalization Toolkit based on XPG/4.
+                  This is located on disc 3 of Devcon 12 under
+                  \toolkits\i18n\lib\setloci.lib
+                  This is needed for the regular expressions, regcomp(),
+                  regerror(), regexec(), and regfree().
+
+    wchar.h     - These are in \toolkits\warptlkt\toolkit\h\libc\
+    locale.h      and also in \toolkits\i18n\include
+    regex.h
+
+    repack.exe  - Devcon 12 Disk 1 \devtools\repack\
+                  or remove this line from the makefile
+                  The debug compile doesn't not repack, so you don't
+                  need this unless you make a non-debug compile.
+
+
+----
+
+Phil Crown
+pcrown@airmail.net
+http://web2.airmail.net/pcrown/
+

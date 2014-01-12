@@ -1,0 +1,489 @@
+
+                    B I N A R Y   N E W S   G A T H E R E R
+                    =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+                    Copyright 1996, 1997 by Crown Software
+                                   Phil Crown
+                               pcrown@airmail.net
+                        http://web2.airmail.net/pcrown/
+
+
+THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+Contents
+=-=-=-=-
+
+ 1.  Overview
+ 2   System Requirements
+ 3.  Quick Start
+ 4.  Configuration File
+ 5.  Command Line Options
+ 6.  Tips - Examples
+ 7.  File Naming Mechanism
+ 8.  Problems
+ 9.  Future versions
+10.  Registration - FREEWARE!
+11.  History
+
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+1.  Overview
+
+Binary News Gatherer is an OS/2 text mode application for downloading an
+overview and selected articles from binary news groups via NNTP.
+
+See "History" at the end of this document for recent changes.
+
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+2.  System Requirements
+
+OS/2 Warp v3 or higher.
+
+This program uses longfilenames, therefore requires HPFS.
+
+OS/2 Warp IAK (so32dll.dll and tcp32dll.dll, and setloc1.dll).
+
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+3.  Quick Start
+
+Typical usage consists of following steps:
+
+  1.  Edit bnews.ini (first time usage only) for your system.
+      See bnews.ini.
+
+  2.  Download an overview of a group:  bnews /Covernew /G<group> /H<host>
+      Overview is saved as <group>.over.txt.
+
+  3.  Create a list of articles that you want to retrieve.  You must do
+      this with your favorite text editor.  Load the <group>.over.txt
+      file in your editor, and cut and paste the articles that you
+      want to get, save as <group>.get.txt
+
+  4.  Download the articles:  bnews /Cart /G<group> /H<host>
+      Articles are saved in <group>.uue.
+
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+4.  Configuration File
+
+Bnews.ini is the configuration file.  This file is not required, but it
+will save some typing at the command line.
+
+The default configuration file is bnews.ini, in the same directory as
+bnews.exe.  To specify a different configuration file, use the /Imy.ini
+switch.
+
+The configuration file can contain any valid Command Line Options,
+except; /I<my.ini>
+
+See:  bnews.ini
+
+Parameters on the command line that appear after /imy.ini override
+settings in the configuration file.
+
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+5.  Command Line Options
+
+/A[U|P]       AUTHINFO
+
+              /au<username> /ap<password>
+
+              Environment variables are searched for in the following
+              order (command line overrides environment):
+
+                USER
+                USERID
+
+                PASSWORD
+                PASS
+                PASSIP
+
+              These options can also be placed in bnews.ini
+              
+
+/C<command>   ART, OVERALL, OVERNEW, NEW, NEXT, LIST, HELP
+
+    /CART     ARTICLE - Download articles listed in <group>.get.txt.
+
+    /COVERALL Download an overview of the entire group.
+
+    /COVERNEW Download new overview of the group.
+              (new overview only, not the entire article).
+
+              bnews.newsrc (in the same directory as bnews.exe)
+              contains the high water marks for each group.
+
+              The format of bnews.newsrc is:
+
+              group: highwater, highwater
+
+              highwater = highest article since last overnew command.
+              highwater = highest article since last next command.
+
+    /CNEW     NEWNEWS - Downloads only new articles since the
+              last /cnew session was run.  The file
+              bnews.newstime (in the same directory as
+              bnews.exe) contains the last access time for
+              each group.
+
+              The format of bnews.newstime is
+
+              group=yymmdd hhmmss
+
+              yymmdd hhmms = yearmonthday<space>hourminutesecond
+              that the group was last accessed.
+
+              Note:  NEWNEWS downloads *all* new articles, not
+              just and overview.
+
+              NEWNEWS can take quite a long time if the last access
+              time is very old.  Try using a later access time.
+
+              Some servers have disabled the NEWNEWS command.
+
+    /CNEXT    Downloads articles starting with the last highest
+              read article number.  This command downloads all
+              new articles, not just an overview.
+              bnews.newsrc (in the same directory as bnews.exe)
+              contains the high water marks for each group.
+
+              The format of bnews.newsrc is:
+
+              group: highwater, highwater
+
+              highwater = highest article since last overnew command.
+              highwater = highest article since last next command.
+
+    /LIST     Get a list of all newgroups from the server.
+              Groups are saved in a file called <host>.list.txt.
+              This can take quite a while, some servers have
+              more than 20,000 news groups.
+
+    /CHELP    Get list of commands from newsserver.
+              Saved as <host>.help.txt
+
+/G<group>     The full name of the news group to retrieve articles or an
+              overview from.
+
+              /Galt.binaries.pictures
+              /Gmy.favorite.binaries.group
+
+/H<hostname>  Your NNTP news server.
+
+              /Hnews.your.net
+              /Hnews
+
+/I<my.ini>    Use my.ini as the configuration file.  Default is bnews.ini
+              in the same directory as bnews.exe.
+
+              /Imy.ini
+              /Ix:\path\my.ini
+
+/K<killfile>  Use killfile.  Default is bnews.kill in the same
+              directory as bnews.exe.
+
+              The format of the killfile is
+
+              all {
+                  From someone@something.com
+                  Subject \$\$\$
+                  Header sometrash
+              }
+              
+              group.name {
+                  From someoneelse@something.com
+                  Subject FREE
+                  Header sometrash
+              }
+
+              Regular expressions can be used in the group name too.
+
+              alt.binaries* {
+                  ...
+              }
+
+              Regular expressions are supported.
+              All comparisons are case insensitive.
+
+/L<logfile>   NOTE : logging is currently disabled, this switch has no
+                     effect.
+
+              Create a log file for error messages.  Default is
+              bnews.log in the same path as bnews.exe.
+
+              /L
+
+              To specify the logfile name.
+
+              /Lmylog.txt
+              /Lx:\path\mylog.txt
+
+/M<maxpacket> Maximum kilobytes to download this session.  Default is 1024k.
+              If an article is incomplete bnews will finish downloading
+              the remaining article, then quit.
+              This switch only applies when /cNEXT is used.
+
+/O            Read from stdin and write to stdout.
+
+/P<port>      Port number.  Default is 119, this switch will probably
+              never need to be used.
+
+              /P119
+
+/S            Sort the overview of a group by Subject.  Default is not
+              to sort the group overview.  This switch only applies in
+              overview mode, /cOVERALL or /cOVERNEW
+
+/V            Verify articles exist on server before downloading begins.
+              Useful when downloading multi-part messages.
+              This switch only applies in articles mode, /cART.
+
+/D            Show debug information.
+
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+6.  Tips - Examples
+
+Options are searched for in the following order:
+
+    1.  Environment Variable(s) - NNTPSERVER=news.my.net
+    2.  Bnews.ini
+    3.  Commandline parameters
+
+    Parameters on the command line that come before /I<my.ini> will be
+    overridden if they are also defined in <my.ini>
+
+Redirect stderr to a file to save a copy of error messages.
+
+    bnews <options> -d 2>errlog.txt
+    
+Examples:
+
+  Download an overview of the entire group:
+
+    bnews -coverall -galt.binaries.pictures -hnews.your.net
+
+  Download only a new overview:
+
+    bnews -covernew -galt.binaries.pictures -hnews.your.net
+
+  Download 2 megs of new articles:
+
+    bnews -cnext -galt.binaries.pictures -hnew.your.net -m2048
+
+  Download articles listed in <group>.get.txt:
+
+    bnews -cart -galt.binaries.pictures -hnew.your.net
+
+  Download a list of all newsgroups:
+
+    bnews -clist -hnews.your.net
+
+  Get a list of commands the server recognizes:
+
+    bnews -chelp -hnews.your.net
+
+  Read from stdin and write to stdout
+
+    bnews -covernew -o | bnewsfilter | bnews -cart -o > art.uue
+    bnews -covernew -o | bnewsfilter | bnews -cart -o | uudeview -io -
+
+
+The overview is saved to a text file named <group>.over.txt.  The text
+file is named by the group with ".over.txt" appended at the end of the
+group's name. See "File Naming Mechanism", below.
+
+You must have the appropriate tools (uudecode, pmuue, mime, ...) to
+extract the encoded <group>.uue file.
+
+When the /V command line option is used (only valid with /cART), bnews
+verifies that the all articles exist on the server before downloading
+begins.  There are rare occasions when an article(s) listed in the
+overview does not exist on the server, so it seems pointless to download
+6/7 to find that 7/7 doesn't exist.  At least, all articles are known to
+exist when the download begins, its still possible that article(s) may
+be deleted on the server after the download begins, but this is even
+rarer in my experience.
+
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+7.  File Naming Mechanism
+
+*NOTE*:  You must provide the group's FULL NAME on the command line or
+         in the configuration file.
+
+<host>.list.txt   - List of all newsgroups created when /cLIST is used.
+                    Always overwritten, truncated.
+
+<group>.over.txt  - Overview of articles, created by bnews.
+                    /coverall = Always overwritten, truncated.
+                    /covernew = Never overwritten, appended.
+                    
+<group>.get.txt   - List of articles to get, created by you.
+                    Only read.
+
+<group>.uue       - Downloaded articles, created by bnews.
+                    Never overwritten, appended.
+
+To keep filenames shorter, the following hierarchies are abbreviated:
+
+          alt.bbs.doors.binaries.           = a.b.d.b.
+          alt.binaries.erotica.             = a.b.e.
+          alt.binaries.games.               = a.b.g.
+          alt.binaries.multimedia.          = a.b.m.
+          alt.binaries.nude.                = a.b.n.
+          alt.binaries.pictures.erotica.    = a.b.p.e.
+          alt.binaries.pictures.            = a.b.p.
+          alt.binaries.sounds.              = a.b.s.
+          alt.binaries.warez.               = a.b.w.
+          alt.binaries.                     = a.b.
+          alt.games.                        = a.g.
+          comp.binaries.                    = c.b.
+          de.alt.binaries.                  = d.a.b.
+          fj.binaries.                      = f.b.
+          relcom.comp.                      = r.c.
+
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+8.  Problems
+
+When pasting to <group>.get.txt, care must be used to preserve the tab
+(0x09) characters, otherwise the byte count will not be accurate.  This
+does not affect the program's operation.  The byte count is only an
+estimate the total number of bytes expected, minus the headers.
+(Note: byte count is currently disabled).
+
+The following only applies when /cART is used:
+
+ If the download is interrupted, for any reason, the <group>.get.txt and
+ <group>.uue files must be reset to the last complete message manually by
+ you with your text editor.  Follow these two steps:
+
+   1.  Load <group>.uue in your text editor, look at the end of the file
+       to see if the last message is complete or incomplete.  Most
+       complete uuencoded articles end with "end" as the last line.
+       Delete any incomplete message at the end of the <group>.uue file.
+
+   2.  Reset the <group>.get.txt file by deleting the articles at the
+       beginning of the file which were completely downloaded, so that
+       when Bnews is run again it will begin downloading the article that
+       was incomplete.  You may have to look in <group>.uue to see which,
+       if any, article was incomplete.
+
+                                 ***IMPORTANT***
+             If you don't follow these two steps, the encoded data in
+                      <group>.uue will not decode properly!
+
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+9.  Future versions
+
+Fix the above problems.
+
+Improve logging.
+
+Suggestions welcome.
+
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+10.  Registration
+
+This program is donated to the Public Domain and is free for
+anyone to use.  I would appreciate an email if you are using the program,
+just to know that someone is using it.
+
+Email to: pcrown@airmail.net (Phil Crown)
+
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+11.  History
+
+0.90  Jul 31 96 - First release.
+
+0.91  Aug 17 96 - Touches <group>.get.txt, if it doesn't exist,
+                  when downloading an overview.  Helps with
+                  cutting/pasting with QEdit, maybe others.
+                  Fewer lines from the headers are saved.
+                  Shows cps.
+                  Shows elapsed runtime.
+                  Added cleanover.cmd - REXX script to discard trash
+                  from <group>.over.txt.
+                  Added /D /I /L /S and /V command line options.
+                  More options in .ini file.
+
+0.92  Aug 20 96 - Output to log file is flushed.
+                  File Naming Mechanism improved.
+                  Article number appended to "423 Bad Article" message.
+                  Fixed spelling of Article in Good Article.
+
+0.93  Oct 31 96 - /O switch added - read from stdin and write to stdout.
+                  /Cnew - newnews command added.
+                  fixed bug in /cnew command that corrupted the date/time
+                  in bnews.newstime.
+                  fixed bug in socket function when '.' is the first
+                  character of a line of an article.
+                  Compiled with IBM CSet++ v2.01
+                  c2151mt.dll no longer needed
+
+0.94a Jan 15 97 - REXX .cmd files now load the REXXUTIL functions.
+                  Bnews.exe is packed with repack.exe, which means it
+                  consumes less disk space, loads faster, and will run
+                  only under OS/2 Warp v3 or higher.
+                  Memory leaks plugged thanks to CSet++'s Debug Memory
+                  Management Features (no more memory leaks, which OS/2
+                  cleans up when the program terminates anyway).
+                  /cHelp HELP command documented.
+                  bnews.newstime format documented.
+                  Source for bnews cleaned up quite a bit, (almost a total
+                  rewrite).
+                  Checks for the environment variable NNTPSERVER
+                  NEXT command added to get articles by number.
+                  LIST command added to get a list of all newsgroups.
+                  OVERNEW and OVERALL commands replace OVER command.
+                  Kill file added (regular expressions).
+                  /M<maxpacket> switch added.
+                  oclii.dll no longer required (statically linked).
+                  changes to bnews.ini:
+                      dostdinstdout is now dostdio
+                      killfile added
+
+0.94b           - Fixed bug in the sorting routine (/cLIST and /cOVER*)
+                  Not publicly released.
+
+0.94c Jan 23 97 - Fixed SYS3171 when -clist or -chelp is used and no group
+                  is specified.
+                  Fixed rc = 3 error (Thanks Dave! :-)
+
+0.95  Jan 25 97 - AUTHINFO authentication support added:
+                    AUTHINFO USER AUTHINFO PASS
+                    AUTHINFO SIMPLE
+                  Changes to bnews.ini:
+                    added authuser
+                    added authpass
+                  Fixed /cnext to get first article when the highwater
+                  mark is 0 in bnewes.newsrc
+                  Made some changes to the killfile handling. There is
+                  now no limit on the number of groups or kill expressions.
+
+0.95a Jan 01 97 - Fixed bug in /coverall - would not get an overview if
+                  the highwatermark = highest article available on server.
+                  Fixed bug that caused /cover* to read the wrong highwater
+                  mark under certain conditions.
+
+0.96  Mar 09 97 - Errorlevel  1 returned if no connection is made.
+                  Errorlevel 99 returned if Ctrl+C/Break is pressed.
+                  Errorlevel  0 otherwise.
+                  Authinfo username/password is not converted to lower case.
+
